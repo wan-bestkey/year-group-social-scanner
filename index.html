@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE YEAR GROUP SOCIAL | Ticket Scanner</title>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;padding:24px 16px;background:#101010;
+  color:#fff;font-family:Arial,sans-serif
+}
+.container{max-width:480px;margin:auto}
+header{text-align:center;margin-bottom:25px}
+.logo{color:#d5ad55;font-size:13px;letter-spacing:4px}
+h1{font-size:25px;margin:12px 0 5px}
+.subtitle{color:#aaa;font-size:13px}
+.panel{
+  background:#1b1b1b;border:1px solid #393126;
+  border-radius:14px;padding:20px;margin-bottom:16px
+}
+label{
+  display:block;color:#d5ad55;font-size:13px;
+  margin-bottom:8px
+}
+input{
+  width:100%;padding:14px;border-radius:8px;
+  border:1px solid #555;background:#111;color:white;
+  font-size:16px;margin-bottom:15px
+}
+button{
+  width:100%;padding:14px;border:0;border-radius:8px;
+  font-size:15px;font-weight:bold;cursor:pointer;margin-top:8px
+}
+.primary{background:#d5ad55;color:#111}
+.secondary{background:#333;color:white}
+button:disabled{opacity:.5;cursor:not-allowed}
+#reader{width:100%;overflow:hidden;border-radius:10px}
+#result{
+  display:none;padding:16px;border-radius:9px;
+  margin-top:16px;line-height:1.6;overflow-wrap:anywhere
+}
+.success{background:#123b27;color:#9ff0bd}
+.failure{background:#4a1d1d;color:#ffb5b5}
+.info{color:#aaa;font-size:12px;text-align:center;margin-top:18px}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <div class="logo">THE YEAR GROUP SOCIAL</div>
+  <h1>Ticket Verification</h1>
+  <div class="subtitle">Beyond the Classroom</div>
+</header>
+
+<div class="panel">
+  <label for="staffPin">STAFF SECURITY PIN</label>
+  <input
+    id="staffPin"
+    type="password"
+    inputmode="numeric"
+    maxlength="6"
+    placeholder="Enter your 6-digit PIN"
+    autocomplete="off"
+  >
+
+  <label>QR CODE SCANNER</label>
+  <div id="reader"></div>
+
+  <button class="primary" id="startButton" onclick="startScanner()">
+    START CAMERA SCANNER
+  </button>
+
+  <button class="secondary" onclick="stopScanner()">
+    STOP CAMERA
+  </button>
+</div>
+
+<div class="panel">
+  <label for="manualToken">MANUAL TICKET VERIFICATION</label>
+  <input
+    id="manualToken"
+    type="text"
+    placeholder="Enter or paste QR token"
+    autocomplete="off"
+  >
+
+  <button class="primary" id="verifyButton" onclick="verifyManual()">
+    VERIFY TICKET
+  </button>
+</div>
+
+<div id="result"></div>
+
+<div class="info">
+  Authorised event staff only · Secure ticket verification
+</div>
+
+</div>
+
+<script>
+const API_URL =
+  "https://year-group-social-api.vwayne832.workers.dev/";
+
+let scanner = null;
+let scanning = false;
+let processing = false;
+
+function showResult(message, success) {
+  const box = document.getElementById("result");
+  box.style.display = "block";
+  box.className = success ? "success" : "failure";
+  box.textContent = message;
+}
+
+async function verifyToken(token) {
+  const pin = document.getElementById("staffPin").value.trim();
+
+  if (!/^\d{6}$/.test(pin)) {
+    showResult("Enter your valid 6-digit staff PIN.", false);
+    return;
+  }
+
+  if (!token || processing) return;
+
+  processing = true;
+  document.getElementById("verifyButton").disabled = true;
+  showResult("Verifying ticket...", true);
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action: "scan",
+        token: token.trim(),
+        staffPin: pin
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success === true) {
+      const attendee =
+        data.attendeeName || data.name || "Verified attendee";
+
+      const ticket =
+        data.ticketId || "Ticket verified";
+
+      showResult(
+        "CHECK-IN SUCCESS\nAttendee: " + attendee +
+        "\nTicket: " + ticket,
+        true
+      );
+
+      document.getElementById("manualToken").value = "";
+    } else {
+      showResult(
+        data.message || "Ticket rejected.",
+        false
+      );
+    }
+
+  } catch (error) {
+    showResult(
+      "Connection failed. Check your internet connection and try again.",
+      false
+    );
+  } finally {
+    processing = false;
+    document.getElementById("verifyButton").disabled = false;
+  }
+}
+
+async function startScanner() {
+  const pin = document.getElementById("staffPin").value.trim();
+
+  if (!/^\d{6}$/.test(pin)) {
+    showResult("Enter your 6-digit staff PIN first.", false);
+    return;
+  }
+
+  if (!window.Html5Qrcode) {
+    showResult(
+      "Scanner library failed to load. Check your internet connection.",
+      false
+    );
+    return;
+  }
+
+  if (scanning) return;
+
+  try {
+    if (!scanner) {
+      scanner = new Html5Qrcode("reader");
+    }
+
+    await scanner.start(
+      { facingMode: "environment" },
+      {
+        fps: 10,
+        qrbox: { width: 250, height: 250 }
+      },
+      async (decodedText) => {
+        if (!processing) {
+          await stopScanner();
+          await verifyToken(decodedText);
+        }
+      }
+    );
+
+    scanning = true;
+    document.getElementById("startButton").disabled = true;
+    showResult(
+      "Camera ready. Point it at a ticket QR code.",
+      true
+    );
+
+  } catch (error) {
+    showResult(
+      "Camera could not start. Allow camera access and try again.",
+      false
+    );
+  }
+}
+
+async function stopScanner() {
+  if (scanner && scanning) {
+    try {
+      await scanner.stop();
+      scanning = false;
+    } catch (error) {
+      console.error("Camera stop error:", error);
+    }
+  }
+
+  document.getElementById("startButton").disabled = false;
+}
+
+function verifyManual() {
+  const token =
+    document.getElementById("manualToken").value.trim();
+
+  if (!token) {
+    showResult("Enter a ticket token first.", false);
+    return;
+  }
+
+  verifyToken(token);
+}
+</script>
+</body>
+</html>
