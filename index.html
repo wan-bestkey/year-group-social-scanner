@@ -3,47 +3,192 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>THE YEAR GROUP SOCIAL | Ticket Scanner</title>
+
+<title>EMOS | YEAR GROUP SOCIAL: ONE MORE MEMORY</title>
+
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
 <style>
-*{box-sizing:border-box}
-body{
-  margin:0;padding:24px 16px;background:#101010;
-  color:#fff;font-family:Arial,sans-serif
+:root {
+  --navy: #0b1428;
+  --navy-light: #14213b;
+  --black: #080b12;
+  --gold: #d5ad55;
+  --gold-light: #f0d28b;
+  --white: #f5f5f5;
+  --muted: #a5adbd;
+  --border: #34415a;
 }
-.container{max-width:480px;margin:auto}
-header{text-align:center;margin-bottom:25px}
-.logo{color:#d5ad55;font-size:13px;letter-spacing:4px}
-h1{font-size:25px;margin:12px 0 5px}
-.subtitle{color:#aaa;font-size:13px}
-.panel{
-  background:#1b1b1b;border:1px solid #393126;
-  border-radius:14px;padding:20px;margin-bottom:16px
+
+* {
+  box-sizing: border-box;
 }
-label{
-  display:block;color:#d5ad55;font-size:13px;
-  margin-bottom:8px
+
+body {
+  margin: 0;
+  padding: 28px 16px;
+  background:
+    radial-gradient(circle at top, #172644 0%, var(--black) 65%);
+  color: var(--white);
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
 }
-input{
-  width:100%;padding:14px;border-radius:8px;
-  border:1px solid #555;background:#111;color:white;
-  font-size:16px;margin-bottom:15px
+
+.container {
+  max-width: 480px;
+  margin: auto;
 }
-button{
-  width:100%;padding:14px;border:0;border-radius:8px;
-  font-size:15px;font-weight:bold;cursor:pointer;margin-top:8px
+
+header {
+  text-align: center;
+  margin-bottom: 28px;
 }
-.primary{background:#d5ad55;color:#111}
-.secondary{background:#333;color:white}
-button:disabled{opacity:.5;cursor:not-allowed}
-#reader{width:100%;overflow:hidden;border-radius:10px}
-#result{
-  display:none;padding:16px;border-radius:9px;
-  margin-top:16px;line-height:1.6;overflow-wrap:anywhere
+
+.logo {
+  color: var(--gold);
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: 7px;
 }
-.success{background:#123b27;color:#9ff0bd}
-.failure{background:#4a1d1d;color:#ffb5b5}
-.info{color:#aaa;font-size:12px;text-align:center;margin-top:18px}
+
+.brand-line {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 3px;
+  margin-top: 7px;
+}
+
+.event-title {
+  color: var(--white);
+  font-size: 23px;
+  line-height: 1.35;
+  margin: 24px 0 7px;
+}
+
+.subtitle {
+  color: var(--gold-light);
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.divider {
+  width: 55px;
+  height: 2px;
+  background: var(--gold);
+  margin: 19px auto 0;
+}
+
+.panel {
+  background: rgba(20, 33, 59, 0.88);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 21px;
+  margin-bottom: 17px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+label {
+  display: block;
+  color: var(--gold-light);
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1.2px;
+  margin-bottom: 9px;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid #46536b;
+  background: var(--black);
+  color: white;
+  font-size: 16px;
+  margin-bottom: 19px;
+  outline: none;
+}
+
+input:focus {
+  border-color: var(--gold);
+}
+
+input::placeholder {
+  color: #778197;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  border: 0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 0.7px;
+  cursor: pointer;
+  margin-top: 9px;
+  transition: opacity 0.2s ease;
+}
+
+.primary {
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  color: #101522;
+}
+
+.secondary {
+  background: #27344c;
+  color: white;
+  border: 1px solid #46536b;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+#reader {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--black);
+}
+
+#result {
+  display: none;
+  padding: 17px;
+  border-radius: 9px;
+  margin-top: 16px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+  font-size: 14px;
+}
+
+.success {
+  background: #123b2b;
+  color: #a7f0c2;
+  border: 1px solid #26724b;
+}
+
+.failure {
+  background: #451d27;
+  color: #ffb9c2;
+  border: 1px solid #873b4b;
+}
+
+.info {
+  color: var(--muted);
+  font-size: 11px;
+  text-align: center;
+  line-height: 1.7;
+  margin-top: 22px;
+}
+
+.footer-brand {
+  color: var(--gold);
+  letter-spacing: 2px;
+  font-weight: bold;
+  margin-top: 8px;
+}
 </style>
 </head>
 
@@ -51,13 +196,22 @@ button:disabled{opacity:.5;cursor:not-allowed}
 <div class="container">
 
 <header>
-  <div class="logo">THE YEAR GROUP SOCIAL</div>
-  <h1>Ticket Verification</h1>
-  <div class="subtitle">Beyond the Classroom</div>
+  <div class="logo">EMOS</div>
+  <div class="brand-line">EVENT MANAGEMENT TECHNOLOGY</div>
+
+  <h1 class="event-title">
+    YEAR GROUP SOCIAL:<br>
+    ONE MORE MEMORY
+  </h1>
+
+  <div class="subtitle">A Memory Worth Keeping</div>
+  <div class="divider"></div>
 </header>
 
 <div class="panel">
+
   <label for="staffPin">STAFF SECURITY PIN</label>
+
   <input
     id="staffPin"
     type="password"
@@ -67,20 +221,31 @@ button:disabled{opacity:.5;cursor:not-allowed}
     autocomplete="off"
   >
 
-  <label>QR CODE SCANNER</label>
+  <label>LIVE TICKET SCANNER</label>
+
   <div id="reader"></div>
 
-  <button class="primary" id="startButton" onclick="startScanner()">
+  <button
+    class="primary"
+    id="startButton"
+    onclick="startScanner()"
+  >
     START CAMERA SCANNER
   </button>
 
-  <button class="secondary" onclick="stopScanner()">
+  <button
+    class="secondary"
+    onclick="stopScanner()"
+  >
     STOP CAMERA
   </button>
+
 </div>
 
 <div class="panel">
-  <label for="manualToken">MANUAL TICKET VERIFICATION</label>
+
+  <label for="manualToken">MANUAL TICKET CHECK</label>
+
   <input
     id="manualToken"
     type="text"
@@ -88,15 +253,23 @@ button:disabled{opacity:.5;cursor:not-allowed}
     autocomplete="off"
   >
 
-  <button class="primary" id="verifyButton" onclick="verifyManual()">
+  <button
+    class="primary"
+    id="verifyButton"
+    onclick="verifyManual()"
+  >
     VERIFY TICKET
   </button>
+
 </div>
 
-<div id="result"></div>
+<div id="result" role="status" aria-live="polite"></div>
 
 <div class="info">
-  Authorised event staff only · Secure ticket verification
+  Authorised event personnel only.<br>
+  Secure ticket verification and attendee check-in.
+
+  <div class="footer-brand">POWERED BY EMOS</div>
 </div>
 
 </div>
@@ -111,23 +284,30 @@ let processing = false;
 
 function showResult(message, success) {
   const box = document.getElementById("result");
+
   box.style.display = "block";
   box.className = success ? "success" : "failure";
   box.textContent = message;
 }
 
 async function verifyToken(token) {
-  const pin = document.getElementById("staffPin").value.trim();
+  const pin =
+    document.getElementById("staffPin").value.trim();
 
   if (!/^\d{6}$/.test(pin)) {
-    showResult("Enter your valid 6-digit staff PIN.", false);
+    showResult(
+      "Enter your valid 6-digit staff PIN.",
+      false
+    );
     return;
   }
 
   if (!token || processing) return;
 
   processing = true;
+
   document.getElementById("verifyButton").disabled = true;
+
   showResult("Verifying ticket...", true);
 
   try {
@@ -147,18 +327,24 @@ async function verifyToken(token) {
 
     if (data.success === true) {
       const attendee =
-        data.attendeeName || data.name || "Verified attendee";
+        data.attendeeName ||
+        data.name ||
+        "Verified attendee";
 
       const ticket =
-        data.ticketId || "Ticket verified";
+        data.ticketId ||
+        "Ticket verified";
 
       showResult(
-        "CHECK-IN SUCCESS\nAttendee: " + attendee +
+        "CHECK-IN SUCCESS\n" +
+        "YEAR GROUP SOCIAL: ONE MORE MEMORY\n\n" +
+        "Attendee: " + attendee +
         "\nTicket: " + ticket,
         true
       );
 
       document.getElementById("manualToken").value = "";
+
     } else {
       showResult(
         data.message || "Ticket rejected.",
@@ -171,17 +357,23 @@ async function verifyToken(token) {
       "Connection failed. Check your internet connection and try again.",
       false
     );
+
   } finally {
     processing = false;
+
     document.getElementById("verifyButton").disabled = false;
   }
 }
 
 async function startScanner() {
-  const pin = document.getElementById("staffPin").value.trim();
+  const pin =
+    document.getElementById("staffPin").value.trim();
 
   if (!/^\d{6}$/.test(pin)) {
-    showResult("Enter your 6-digit staff PIN first.", false);
+    showResult(
+      "Enter your 6-digit staff PIN first.",
+      false
+    );
     return;
   }
 
@@ -215,7 +407,9 @@ async function startScanner() {
     );
 
     scanning = true;
+
     document.getElementById("startButton").disabled = true;
+
     showResult(
       "Camera ready. Point it at a ticket QR code.",
       true
@@ -234,6 +428,7 @@ async function stopScanner() {
     try {
       await scanner.stop();
       scanning = false;
+
     } catch (error) {
       console.error("Camera stop error:", error);
     }
@@ -254,5 +449,6 @@ function verifyManual() {
   verifyToken(token);
 }
 </script>
+
 </body>
 </html>
